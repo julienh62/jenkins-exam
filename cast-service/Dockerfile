@@ -12,3 +12,6 @@ RUN pip install -r /app/requirements.txt \
     && rm -rf /root/.cache/pip
 
 COPY . /app/
+
+# Commande pour démarrer l'application FastAPI avec uvicorn
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8081"]
