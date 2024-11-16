@@ -25,3 +25,14 @@ Vous pouvez vérifier que les namespaces sont bien créés en exécutant :
 bash
 
 kubectl get namespaces
+
+se connecter docker login
+
+construire le build (se placer dans movie-service pour la seconde image)
+docker docker build -t julh62/jenkins_devops_exams_movie_service:latest .
+docker push julh62/jenkins_devops_exams_movie_service:latest
+
+
+
+pousser l'image sur dockerhub
+ou bien pull l'image si elle est deja sur dockerhub 
