@@ -26,7 +26,7 @@ pipeline {
                 script {
                     sh '''
                     docker rm -f movie-service-container || true
-                    docker build -t $DOCKER_ID/$MOVIE_SERVICE_IMAGE:$DOCKER_TAG -f movie-service/Dockerfile movie-service
+                    docker build -t $DOCKER_ID/$CAST_SERVICE_IMAGE:$DOCKER_TAG -f cast-service/Dockerfile movie-service
                     '''
                 }
             }
