@@ -10,14 +10,14 @@ pipeline {
         
         // Étape de construction de l'image pour cast-service
         stage('Docker Build Cast Service') {
-            steps {
+             steps {
                 script {
                     sh '''
                     docker rm -f cast-service-container || true
-                    docker build -t $DOCKER_ID/$MOVIE_SERVICE_IMAGE:$DOCKER_TAG -f movie-service/Dockerfile cast-service
-                      '''
+                    docker build -t $DOCKER_ID/$CAST_SERVICE_IMAGE:$DOCKER_TAG -f cast-service/Dockerfile cast-service
+                    '''
                 }
-            }
+             }
         }
         
         // Étape de construction de l'image pour movie-service
@@ -26,7 +26,8 @@ pipeline {
                 script {
                     sh '''
                     docker rm -f movie-service-container || true
-                    docker build -t $DOCKER_ID/$CAST_SERVICE_IMAGE:$DOCKER_TAG -f cast-service/Dockerfile movie-service
+                    docker build -t $DOCKER_ID/$MOVIE_SERVICE_IMAGE:$DOCKER_TAG -f movie-service/Dockerfile movie-service
+
                     '''
                 }
             }
