@@ -12,11 +12,13 @@ pipeline {
         stage('Docker Build Cast Service') {
             steps {
                 script {
+                  timeout(time: 1, unit: 'MINUTES') { 
                     sh '''
                     docker rm -f cast-service-container || true
                     docker build -t $DOCKER_ID/$CAST_SERVICE_IMAGE:$DOCKER_TAG -f cast-service/Dockerfile cast-service
                     '''
                 }
+              }
             }
         }
         
@@ -24,12 +26,14 @@ pipeline {
         stage('Docker Build Movie Service') {
             steps {
                 script {
+                   timeout(time: 1, unit: 'MINUTES') { 
                     sh '''
                     docker rm -f movie-service-container || true
                     docker build -t $DOCKER_ID/$MOVIE_SERVICE_IMAGE:$DOCKER_TAG -f movie-service/Dockerfile movie-service
                     '''
                 }
             }
+          }
         }
 
         // Étape de push des images vers DockerHub
@@ -82,6 +86,7 @@ pipeline {
             }
             steps {
                 script {
+                     timeout(time: 1, unit: 'MINUTES') { 
                     sh '''
                     rm -Rf .kube
                     mkdir .kube
@@ -90,6 +95,7 @@ pipeline {
                     helm upgrade --install cast-service cast-service/helm --set image.tag=$DOCKER_TAG --namespace dev
                     '''
                 }
+              }
             }
         }
 
@@ -100,6 +106,7 @@ pipeline {
             }
             steps {
                 script {
+                  timeout(time: 1, unit: 'MINUTES') { 
                     sh '''
                     rm -Rf .kube
                     mkdir .kube
@@ -109,6 +116,7 @@ pipeline {
                     '''
                 }
             }
+          }
         }
 
         // Optionnel : Déploiement sur d'autres environnements comme staging ou prod
@@ -118,6 +126,7 @@ pipeline {
             }
             steps {
                 script {
+                    timeout(time: 1, unit: 'MINUTES') { 
                     sh '''
                     rm -Rf .kube
                     mkdir .kube
@@ -127,6 +136,7 @@ pipeline {
                     '''
                 }
             }
+          }
         }
 
         // Optionnel : Déploiement en production avec validation manuelle
@@ -135,7 +145,7 @@ pipeline {
                 KUBECONFIG = credentials("kubeconfig_prod")
             }
             steps {
-                timeout(time: 15, unit: "MINUTES") {
+                timeout(time: 1, unit: "MINUTES") {
                     input message: 'Do you want to deploy to production?', ok: 'Yes'
                 }
                 script {
