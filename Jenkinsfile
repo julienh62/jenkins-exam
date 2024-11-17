@@ -10,14 +10,14 @@ pipeline {
         
         // Étape de construction de l'image pour cast-service
         stage('Docker Build Cast Service') {
-             steps {
+            steps {
                 script {
                     sh '''
                     docker rm -f cast-service-container || true
                     docker build -t $DOCKER_ID/$CAST_SERVICE_IMAGE:$DOCKER_TAG -f cast-service/Dockerfile cast-service
                     '''
                 }
-             }
+            }
         }
         
         // Étape de construction de l'image pour movie-service
@@ -27,7 +27,6 @@ pipeline {
                     sh '''
                     docker rm -f movie-service-container || true
                     docker build -t $DOCKER_ID/$MOVIE_SERVICE_IMAGE:$DOCKER_TAG -f movie-service/Dockerfile movie-service
-
                     '''
                 }
             }
@@ -56,21 +55,27 @@ pipeline {
                     sh '''
                     # Test du service Cast
                     docker run -d --name cast-service-test -p 8081:8081 $DOCKER_ID/$CAST_SERVICE_IMAGE:$DOCKER_TAG
-                    sleep 10
-                    curl -f http://localhost:8081 || exit 1
+                    # Attendre que le service soit prêt
+                    until $(curl --output /dev/null --silent --head --fail http://localhost:8081); do
+                        echo "Waiting for Cast service to be ready..."
+                        sleep 5
+                    done
                     docker rm -f cast-service-test
-                    
+
                     # Test du service Movie
                     docker run -d --name movie-service-test -p 8080:8080 $DOCKER_ID/$MOVIE_SERVICE_IMAGE:$DOCKER_TAG
-                    sleep 10
-                    curl -f http://localhost:8080 || exit 1
+                    # Attendre que le service soit prêt
+                    until $(curl --output /dev/null --silent --head --fail http://localhost:8080); do
+                        echo "Waiting for Movie service to be ready..."
+                        sleep 5
+                    done
                     docker rm -f movie-service-test
                     '''
                 }
             }
         }
 
-        // Déploiement en développement (optionnel, peut être ajusté selon votre infrastructure)
+        // Déploiement en développement (optionnel)
         stage('Deployment to Dev') {
             environment {
                 KUBECONFIG = credentials("kubeconfig_dev")  // Configuration Kubernetes pour l'environnement Dev
@@ -83,6 +88,24 @@ pipeline {
                     cat $KUBECONFIG > .kube/config
                     helm upgrade --install movie-service movie-service/helm --set image.tag=$DOCKER_TAG --namespace dev
                     helm upgrade --install cast-service cast-service/helm --set image.tag=$DOCKER_TAG --namespace dev
+                    '''
+                }
+            }
+        }
+
+        // Déploiement sur le namespace QA
+        stage('Deployment to QA') {
+            environment {
+                KUBECONFIG = credentials("kubeconfig_qa")  // Configuration Kubernetes pour l'environnement QA
+            }
+            steps {
+                script {
+                    sh '''
+                    rm -Rf .kube
+                    mkdir .kube
+                    cat $KUBECONFIG > .kube/config
+                    helm upgrade --install movie-service movie-service/helm --set image.tag=$DOCKER_TAG --namespace qa
+                    helm upgrade --install cast-service cast-service/helm --set image.tag=$DOCKER_TAG --namespace qa
                     '''
                 }
             }
