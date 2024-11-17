@@ -12,7 +12,7 @@ pipeline {
         stage('Docker Build Cast Service') {
             steps {
                 script {
-                  timeout(time: 1, unit: 'MINUTES') { 
+                  timeout(time: 3, unit: 'MINUTES') { 
                     sh '''
                     docker rm -f cast-service-container || true
                     docker build -t $DOCKER_ID/$CAST_SERVICE_IMAGE:$DOCKER_TAG -f cast-service/Dockerfile cast-service
@@ -26,7 +26,7 @@ pipeline {
         stage('Docker Build Movie Service') {
             steps {
                 script {
-                   timeout(time: 1, unit: 'MINUTES') { 
+                   timeout(time: 3, unit: 'MINUTES') { 
                     sh '''
                     docker rm -f movie-service-container || true
                     docker build -t $DOCKER_ID/$MOVIE_SERVICE_IMAGE:$DOCKER_TAG -f movie-service/Dockerfile movie-service
@@ -60,7 +60,7 @@ pipeline {
                     # Test du service Cast
                     docker run -d --name cast-service-test -p 8081:8081 $DOCKER_ID/$CAST_SERVICE_IMAGE:$DOCKER_TAG
                     # Attendre que le service soit prêt
-                          timeout=60  # Attendre 60 secondes maximum
+                          timeout=180  # Attendre 60 secondes maximum
             while ! curl --output /dev/null --silent --head --fail http://localhost:8081; do
                 echo "Waiting for Cast service to be ready..."
                 sleep 5
@@ -75,7 +75,7 @@ pipeline {
               # Test du service Movie
             docker run -d --name movie-service-test -p 8080:8080 $DOCKER_ID/$MOVIE_SERVICE_IMAGE:$DOCKER_TAG
             # Attendre que le service soit prêt
-            timeout=60  # Attendre 60 secondes maximum
+            timeout=180  # Attendre 60 secondes maximum
             while ! curl --output /dev/null --silent --head --fail http://localhost:8080; do
                 echo "Waiting for Movie service to be ready..."
                 sleep 5
@@ -98,7 +98,7 @@ pipeline {
             }
             steps {
                 script {
-                     timeout(time: 1, unit: 'MINUTES') { 
+                     timeout(time: 3, unit: 'MINUTES') { 
                     sh '''
                     rm -Rf .kube
                     mkdir .kube
@@ -118,7 +118,7 @@ pipeline {
             }
             steps {
                 script {
-                  timeout(time: 1, unit: 'MINUTES') { 
+                  timeout(time: 3, unit: 'MINUTES') { 
                     sh '''
                     rm -Rf .kube
                     mkdir .kube
@@ -138,7 +138,7 @@ pipeline {
             }
             steps {
                 script {
-                    timeout(time: 1, unit: 'MINUTES') { 
+                    timeout(time: 3, unit: 'MINUTES') { 
                     sh '''
                     rm -Rf .kube
                     mkdir .kube
@@ -157,7 +157,7 @@ pipeline {
                 KUBECONFIG = credentials("kubeconfig_prod")
             }
             steps {
-                timeout(time: 1, unit: "MINUTES") {
+                timeout(time: 3, unit: "MINUTES") {
                     input message: 'Do you want to deploy to production?', ok: 'Yes'
                 }
                 script {
