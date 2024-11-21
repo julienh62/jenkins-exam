@@ -58,7 +58,7 @@ pipeline {
                 script {
                     sh '''
                     # Test du service Cast
-                    docker run -d --name cast-service-test -p 8081:8081 $DOCKER_ID/$CAST_SERVICE_IMAGE:$DOCKER_TAG
+                    docker run -d --name cast-service-test -p 8090:8081 $DOCKER_ID/$CAST_SERVICE_IMAGE:$DOCKER_TAG
                     # Attendre que le service soit prêt
                           timeout=1800  # Attendre 60 secondes maximum
             while ! curl --output /dev/null --silent --head --fail http://localhost:8081; do
@@ -73,7 +73,7 @@ pipeline {
             docker rm -f cast-service-test
     
               # Test du service Movie
-            docker run -d --name movie-service-test -p 8080:8080 $DOCKER_ID/$MOVIE_SERVICE_IMAGE:$DOCKER_TAG
+            docker run -d --name movie-service-test -p 8091:8080 $DOCKER_ID/$MOVIE_SERVICE_IMAGE:$DOCKER_TAG
             # Attendre que le service soit prêt
             timeout=1800  # Attendre 60 secondes maximum
             while ! curl --output /dev/null --silent --head --fail http://localhost:8080; do
