@@ -9,6 +9,11 @@ docker-compose --version
 sudo apt update
 sudo apt install docker-compose
 
+#nettoyer conteneurs et images
+docker rm -f $(docker ps -aq)
+docker image prune -a
+docker system prune -a
+
 
  - Run `docker-compose up -d`
  - Head over to http://localhost:8080/api/v1/movies/docs for movie service docs 
