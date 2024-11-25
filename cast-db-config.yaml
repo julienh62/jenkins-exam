@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cast-db-config
+  namespace: default  # Vérifiez le namespace si vous n'utilisez pas `default`
+data:
+  POSTGRES_USER_CAST: "cast_db_username"
+  POSTGRES_PASSWORD_CAST: "cast_db_password"
+  POSTGRES_DB_CAST: "cast_db_dev"

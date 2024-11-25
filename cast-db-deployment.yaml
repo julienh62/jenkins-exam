@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cast-db
+  labels:
+    app: cast-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cast-db
+
+  template:
+    metadata:
+      labels:
+        app: cast-db
+    spec:
+      containers:
+      - name: cast-db
+        image: postgres:12.1-alpine
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: cast-db-data
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: cast-db-config
+              key: POSTGRES_USER_CAST
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: cast-db-config
+              key: POSTGRES_PASSWORD_CAST
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: cast-db-config
+              key: POSTGRES_DB_CAST
+      volumes:
+      - name: cast-db-data
+        persistentVolumeClaim:
+          claimName: cast-db-pvc

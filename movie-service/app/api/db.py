@@ -5,7 +5,7 @@ from sqlalchemy import (Column, DateTime, Integer, MetaData, String, Table,
 
 from databases import Database
 
-DATABASE_URI = os.getenv('DATABASE_URI')
+DATABASE_URI = os.getenv('DATABASE_URI_MOVIE')
 
 engine = create_engine(DATABASE_URI)
 metadata = MetaData()

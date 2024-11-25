@@ -1,25 +1,25 @@
 version: '3.7'
 
 services:
-  movie_service:
+  movie-service:
     build: ./movie-service
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     volumes:
       - ./movie-service/:/app/
     ports:
-      - 8001:8000
+      - 8001:8000 # Mappe le port 8001 de l'hôte vers le port 8000 du conteneur
     environment:
       - DATABASE_URI=${DATABASE_URI_MOVIE}
       - CAST_SERVICE_HOST_URL=${CAST_SERVICE_HOST_URL}
     depends_on:
-      - movie_db
+      - movie-db
     env_file:
       - .env  # Référence au fichier .env
 
-  movie_db:
+  movie-db:
     image: postgres:12.1-alpine
     volumes:
-      - postgres_data_movie:/var/lib/postgresql/data/
+      - postgres-data-movie:/var/lib/postgresql/data/
     environment:
       - POSTGRES_USER=${POSTGRES_USER_MOVIE}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_MOVIE}
@@ -27,7 +27,7 @@ services:
     env_file:
       - .env  # Référence au fichier .env
 
-  cast_service:
+  cast-service:
     build: ./cast-service
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     volumes:
@@ -37,14 +37,14 @@ services:
     environment:
       - DATABASE_URI=${DATABASE_URI_CAST}
     depends_on:
-      - cast_db
+      - cast-db
     env_file:
       - .env  # Référence au fichier .env
 
-  cast_db:
+  cast-db:
     image: postgres:12.1-alpine
     volumes:
-      - postgres_data_cast:/var/lib/postgresql/data/
+      - postgres-data-cast:/var/lib/postgresql/data/
     environment:
       - POSTGRES_USER=${POSTGRES_USER_CAST}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_CAST}
@@ -57,11 +57,11 @@ services:
     ports:
       - "8081:8082"
     volumes:
-      - ./nginx_config.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx-config.conf:/etc/nginx/conf.d/default.conf
     depends_on:
-      - cast_service
-      - movie_service
+      - cast-service
+      - movie-service
 
 volumes:
-  postgres_data_movie:
-  postgres_data_cast:
+  postgres-data-movie:
+  postgres-data-cast:
