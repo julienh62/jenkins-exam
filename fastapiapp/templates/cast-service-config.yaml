@@ -4,4 +4,3 @@ metadata:
   name: cast-service-config
 data:
   DATABASE_URI_CAST: postgresql://cast_db_username:cast_db_password@cast-db/cast_db_dev
-  CAST_SERVICE_HOST_URL: "http://cast-service:8002/"

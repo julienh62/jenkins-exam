@@ -25,3 +25,8 @@ spec:
             configMapKeyRef:
               name: movie-service-config
               key: DATABASE_URI_MOVIE
+        - name: CAST_SERVICE_HOST_URL
+          valueFrom:
+            configMapKeyRef:
+              name: movie-service-config
+              key: CAST_SERVICE_HOST_URL

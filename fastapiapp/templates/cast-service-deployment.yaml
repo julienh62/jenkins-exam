@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cast-service
+  labels:
+    app: cast-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cast-service
+  template:
+    metadata:
+      labels:
+        app: cast-service
+    spec:
+      containers:
+      - name: cast-service
+        image: julh62/jenkins-devops-exams-cast-service:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URI_CAST
+          valueFrom:
+            configMapKeyRef:
+              name: cast-service-config
+              key: DATABASE_URI_CAST
