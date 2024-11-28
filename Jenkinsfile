@@ -7,34 +7,33 @@ pipeline {
     }
     agent any  // Utilisation d'un agent Jenkins disponible
     stages {
-        
+
         // Étape de construction de l'image pour cast_service
         stage('Docker Build Cast Service') {
             steps {
                 script {
-                  timeout(time: 13, unit: 'MINUTES') { 
-                    sh '''
-                    docker rm -f cast-service-container || true
-                    docker build -t $DOCKER_ID/$CAST_SERVICE_IMAGE:$DOCKER_TAG -f cast-service/Dockerfile cast-service
-                    '''
+                    timeout(time: 3, unit: 'MINUTES') {
+                        sh '''
+                        docker rm -f cast-service-container || true
+                        docker build -t $DOCKER_ID/$CAST_SERVICE_IMAGE:$DOCKER_TAG -f cast-service/Dockerfile cast-service
+                        '''
+                    }
                 }
-              }
             }
         }
-        
+
         // Étape de construction de l'image pour movie_service
         stage('Docker Build Movie Service') {
             steps {
                 script {
-                   timeout(time: 13, unit: 'MINUTES') { 
-                    sh '''
-                    docker rm -f movie-service-container || true
-                    docker build -t $DOCKER_ID/$MOVIE_SERVICE_IMAGE:$DOCKER_TAG -f movie-service/Dockerfile movie-service
-                    '''
+                    timeout(time: 3, unit: 'MINUTES') {
+                        sh '''
+                        docker rm -f movie-service-container || true
+                        docker build -t $DOCKER_ID/$MOVIE_SERVICE_IMAGE:$DOCKER_TAG -f movie-service/Dockerfile movie-service
+                        '''
+                    }
                 }
             }
-          }
-
         }
 
         // Étape de push des images vers DockerHub
@@ -53,52 +52,38 @@ pipeline {
             }
         }
 
-
-
         // Étape de déploiement sur Kubernetes
         stage('Kubernetes Deployment') {
             steps {
                 script {
                     // Mise à jour des manifests Kubernetes avec la nouvelle version des images
-                    sh """
+                    sh '''
                     sed -i 's#julh62/jenkins-devops-exams-cast-service:.*#julh62/jenkins-devops-exams-cast-service:$DOCKER_TAG#g' kubernetes/cast-db-deployment.yaml
                     sed -i 's#julh62/jenkins-devops-exams-movie-service:.*#julh62/jenkins-devops-exams-movie-service:$DOCKER_TAG#g' kubernetes/movie-db-deployment.yaml
-                    """
 
-                    // Application des manifests Kubernetes
-                    sh """
-                    //Recréez les ConfigMaps si ce n'est pas déjà fait. Par exemple :
-	
-                     kubectl apply -f cast-service-config.yaml
-                     kubectl apply -f cast-db-config.yaml
-                     kubectl apply -f movie-service-config.yaml
-                     kubectl apply -f movie-db-config.yaml
-                     kubectl apply -f nginx-config.yaml
-             //Étape 2: Recréer les PVCs
-                 kubectl apply -f cast-db-volumes.yaml
-                 kubectl apply -f movie-db-volumes.yaml
+                    kubectl apply -f cast-service-config.yaml
+                    kubectl apply -f cast-db-config.yaml
+                    kubectl apply -f movie-service-config.yaml
+                    kubectl apply -f movie-db-config.yaml
+                    kubectl apply -f nginx-config.yaml
 
-            //Étape 3: Recréer les Déploiements (Deployments)
+                    kubectl apply -f cast-db-volumes.yaml
+                    kubectl apply -f movie-db-volumes.yaml
 
-            //Une fois les PVCs et ConfigMaps créés, vous pouvez appliquer les fichiers de déploiement pour chaque service. Appliquez les fichiers YAML des déploiements comme suit :
+                    kubectl apply -f cast-db-deployment.yaml
+                    kubectl apply -f movie-db-deployment.yaml
+                    kubectl apply -f movie-service-deployment.yaml
+                    kubectl apply -f cast-service-deployment.yaml
+                    kubectl apply -f nginx-deployment.yaml
 
-            kubectl apply -f cast-db-deployment.yaml
-            kubectl apply -f movie-db-deployment.yaml
-            kubectl apply -f movie-service-deployment.yaml
-            kubectl apply -f cast-service-deployment.yaml
-            kubectl apply -f nginx-deployment.yaml
-
-	                       //Étape 4: Recréer les Services
-
-             //Une fois les déploiements créés, vous pouvez appliquer les fichiers YAML des services associés pour chaque application. Par exemple :
-
-            kubectl apply -f cast-service-service.yaml
-            kubectl apply -f movie-service-service.yaml
-            kubectl apply -f nginx-service.yaml
-            kubectl apply -f cast-db-service.yaml
-            kubectl apply -f movie-db-service.yaml          
-                    """
+                    kubectl apply -f cast-service-service.yaml
+                    kubectl apply -f movie-service-service.yaml
+                    kubectl apply -f nginx-service.yaml
+                    kubectl apply -f cast-db-service.yaml
+                    kubectl apply -f movie-db-service.yaml
+                    '''
                 }
             }
+        }
     }
 }
