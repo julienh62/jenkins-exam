@@ -58,15 +58,14 @@ pipeline {
                 script {
                     // Mise à jour des manifests Kubernetes avec la nouvelle version des images
                           sh """
-				sed -i 's#julh62/jenkins-devops-exams-cast-service:.*#julh62/jenkins-devops-exams-cast-service:$DOCKER_TAG#g' cast-db-deployment.yaml
-				sed -i 's#julh62/jenkins-devops-exams-movie-service:.*#julh62/jenkins-devops-exams-movie-service:$DOCKER_TAG#g' movie-db-deployment.yaml
+		sed -i 's#julh62/jenkins-devops-exams-cast-service:.*#julh62/jenkins-devops-exams-cast-service:$DOCKER_TAG#g' cast-db-deployment.yaml
+		sed -i 's#julh62/jenkins-devops-exams-movie-service:.*#julh62/jenkins-devops-exams-movie-service:$DOCKER_TAG#g' movie-db-deployment.yaml
 
-
+                                kubectl replace -f nginx-config.yaml --force
 				kubectl apply -f cast-service-config.yaml
 				kubectl apply -f cast-db-config.yaml
 				kubectl apply -f movie-service-config.yaml
 				kubectl apply -f movie-db-config.yaml
-				kubectl apply -f nginx-config.yaml
 
 				kubectl apply -f cast-db-volumes.yaml	
 				kubectl apply -f movie-db-volumes.yaml
