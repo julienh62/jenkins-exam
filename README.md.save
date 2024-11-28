@@ -89,7 +89,7 @@ kubectl apply -f cast-service-config.yaml
 kubectl apply -f cast-db-config.yaml
 kubectl apply -f movie-service-config.yaml
 kubectl apply -f movie-db-config.yaml
-kubectl apply -f nginx-service.yaml
+kubectl apply -f nginx-config.yaml
 
 #Étape 2: Recréer les PVCs
 kubectl get pvc -n default

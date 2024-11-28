@@ -8,3 +8,5 @@ spec:
   ports:
     - port: 5432  # Le port exposé par le service, le même que celui utilisé dans le conteneur PostgreSQL
       targetPort: 5432  # Le port sur lequel le pod écoute
+   #Le port 5432 est un port externe du service Kubernetes (mais interne dans le pod). 
+    #Il est exposé pour que d'autres services dans le cluster puissent y accéder.

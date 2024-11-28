@@ -18,7 +18,7 @@ spec:
       - name: cast-service
         image: julh62/jenkins-devops-exams-cast-service:latest
         ports:
-        - containerPort: 8000
+        - containerPort: 8000   #port interne
         env:
         - name: DATABASE_URI_CAST
           valueFrom:

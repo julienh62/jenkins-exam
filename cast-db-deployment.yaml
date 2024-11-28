@@ -19,7 +19,7 @@ spec:
       - name: cast-db
         image: postgres:12.1-alpine
         ports:
-        - containerPort: 5432
+        - containerPort: 5432 #port interne au conteneur pour les connexions locales dans le pod.
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: cast-db-data

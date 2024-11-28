@@ -68,12 +68,14 @@ pipeline {
                     // Application des manifests Kubernetes
                     sh """
                     //Recréez les ConfigMaps si ce n'est pas déjà fait. Par exemple :
-
-               kubectl apply -f cast-service-config.yaml
-                kubectl apply -f cast-db-config.yaml
-
+	
+                     kubectl apply -f cast-service-config.yaml
+                     kubectl apply -f cast-db-config.yaml
+                     kubectl apply -f movie-service-config.yaml
+                     kubectl apply -f movie-db-config.yaml
+                     kubectl apply -f nginx-config.yaml
              //Étape 2: Recréer les PVCs
-               kubectl apply -f cast-db-volumes.yaml
+                 kubectl apply -f cast-db-volumes.yaml
                  kubectl apply -f movie-db-volumes.yaml
 
             //Étape 3: Recréer les Déploiements (Deployments)
@@ -81,7 +83,7 @@ pipeline {
             //Une fois les PVCs et ConfigMaps créés, vous pouvez appliquer les fichiers de déploiement pour chaque service. Appliquez les fichiers YAML des déploiements comme suit :
 
             kubectl apply -f cast-db-deployment.yaml
-           kubectl apply -f movie-db-deployment.yaml
+            kubectl apply -f movie-db-deployment.yaml
             kubectl apply -f movie-service-deployment.yaml
             kubectl apply -f cast-service-deployment.yaml
             kubectl apply -f nginx-deployment.yaml
@@ -93,7 +95,8 @@ pipeline {
             kubectl apply -f cast-service-service.yaml
             kubectl apply -f movie-service-service.yaml
             kubectl apply -f nginx-service.yaml
-                     
+            kubectl apply -f cast-db-service.yaml
+            kubectl apply -f movie-db-service.yaml          
                     """
                 }
             }

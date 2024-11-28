@@ -7,6 +7,6 @@ spec:
     app: movie-service
   ports:
   - protocol: TCP
-    port: 8001
-    targetPort: 8000
+    port: 8001   # Port externe (accessible de l'extérieur)
+    targetPort: 8000  # Port interne du conteneur
   type: ClusterIP

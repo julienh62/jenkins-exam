@@ -18,7 +18,7 @@ spec:
       - name: movie-service
         image: julh62/jenkins-devops-exams-movie-service:latest
         ports:
-        - containerPort: 8000
+        - containerPort: 8000  #port interne
         env:
         - name: DATABASE_URI_MOVIE
           valueFrom:

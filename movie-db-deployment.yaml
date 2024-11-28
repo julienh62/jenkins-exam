@@ -18,7 +18,7 @@ spec:
       - name: movie-db
         image: postgres:12.1-alpine
         ports:
-        - containerPort: 5432
+        - containerPort: 5432 #port interne du conteneur
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: movie-db-data
