@@ -140,6 +140,17 @@ host    all             all             10.43.137.0/24           trust
 kubectl exec -it cast-db-dbyuhyh -- pg_ctl restart -D /var/lib/postgresql/data
 
 
+## installer Ingress pour aider à la configuration des routes
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+
+kubectl get pods -n ingress-nginx
+kubectl apply -f movie-service-ingress.yaml
+kubectl apply -f cast-service-ingress.yaml
+
+
+
+
+
 ### Déploiement avec Helm
 
 1. Installer Helm :

@@ -7,6 +7,6 @@ spec:
     app: cast-service
   ports:
   - protocol: TCP
-    port: 8002 # Port externe exposé à l'extérieur du cluster
+    port: 8000 # Port externe exposé à l'extérieur du cluster
     targetPort: 8000 # Port interne sur lequel le service écoute dans le conteneur
   type: ClusterIP
